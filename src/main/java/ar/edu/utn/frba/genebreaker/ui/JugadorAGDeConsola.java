@@ -1,33 +1,83 @@
 package ar.edu.utn.frba.genebreaker.ui;
 
-import org.jenetics.BitChromosome;
-import org.jenetics.BitGene;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jenetics.Genotype;
+import org.jenetics.IntegerChromosome;
+import org.jenetics.IntegerGene;
+import org.jenetics.engine.Engine;
+import org.jenetics.engine.EvolutionResult;
 import org.jenetics.util.Factory;
+
+import ar.edu.utn.frba.genebreaker.juego.CodebreakerJuego;
+import ar.edu.utn.frba.genebreaker.juego.Jugada;
 
 public class JugadorAGDeConsola {
 
-	// // 2.) Definition of the fitness function.
-	// private static Integer eval(Genotype<BitGene> gt) {
-	// return ((BitChromosome)gt.getChromosome()).bitCount();
-	// }
+	private List<Jugada> jugadas = new ArrayList<Jugada>();
+
+	private Integer aptitud(Genotype<IntegerGene> gt) {
+		Integer puntaje = 0;
+		
+		for (IntegerGene gene : gt.getChromosome()) {
+			Integer color = gene.getAllele();
+			
+			for (Jugada jugada : jugadas) {
+				if (jugada.codigo.contains(color)) {
+					puntaje += jugada.aciertos_en_pos + jugada.aciertos_no_en_pos;
+				}
+			}
+		}
+		
+		return puntaje;
+	}
 
 	public static void main(String[] args) {
-		// 1.) Define the genotype (factory) suitable
-		// for the problem.
-		Factory<Genotype<BitGene>> gtf = Genotype.of(BitChromosome.of(10, 0.5));
+		JugadorAGDeConsola jugador = new JugadorAGDeConsola();
+		jugador.jugar();
+	}
+	
+	public void jugar()
+	{
+		CodebreakerJuego juego = new CodebreakerJuego();
 
-		// // 3.) Create the execution environment.
-		// Engine<BitGene, Integer> engine = Engine
-		// .builder(HelloWorld::eval, gtf)
-		// .build();
-		//
-		// // 4.) Start the execution (evolution) and
-		// // collect the result.
-		// Genotype<BitGene> result = engine.stream()
-		// .limit(100)
-		// .collect(EvolutionResult.toBestGenotype());
+		System.out.println("Codigo secreto: " + juego.getCodigo());
+		
+		Factory<Genotype<IntegerGene>> gtf = Genotype.of(
+				IntegerChromosome.of(0, juego.getN_colores() -1, juego.getN_elecciones()));
 
-		// System.out.println("Hello World:\n" + result);
+		do {
+			Jugada jugada = new Jugada();
+
+			Engine<IntegerGene, Integer> engine = Engine
+					.builder(this::aptitud, gtf)
+					.populationSize(100)
+					.build();
+
+			Genotype<IntegerGene> result = engine
+					.stream()
+					.limit(200)
+					.collect(EvolutionResult.toBestGenotype());
+			
+			for (int i = 0; i < juego.getN_elecciones(); i++) {
+				jugada.codigo.add(result.getChromosome().getGene(i).getAllele());
+			}
+			
+			boolean gano = juego.jugar(jugada);
+			
+			System.out.println("Jugando: " + jugada.toString());
+			
+			if (gano) {
+				System.out.println("Gano!");
+				return;
+			}
+			else if (juego.terminado()) {
+				System.out.println("Perdio =(");
+				return;
+			}
+			
+			jugadas.add(jugada);
+		} while(true);
 	}
 }
