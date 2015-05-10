@@ -1,4 +1,4 @@
-package genebreaker.juego;
+package ar.edu.utn.frba.genebreaker.juego;
 
 import java.util.ArrayList;
 import java.util.List;

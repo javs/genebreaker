@@ -1,9 +1,9 @@
-package genebreaker.ui;
-
-import genebreaker.juego.CodebreakerJuego;
-import genebreaker.juego.Jugada;
+package ar.edu.utn.frba.genebreaker.ui;
 
 import java.util.Scanner;
+
+import ar.edu.utn.frba.genebreaker.juego.CodebreakerJuego;
+import ar.edu.utn.frba.genebreaker.juego.Jugada;
 
 public class JugadorHumanoDeConsola {
 
