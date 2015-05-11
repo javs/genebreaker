@@ -35,16 +35,28 @@ public class CodebreakerJuego {
 	}
 
 	public boolean jugar(Jugada jugada) {
+		if (terminado())
+			return false;
+
+		compararJugada(jugada, codigo);
+
+		jugadas_hechas++;
+		descubierto = jugada.aciertos_en_pos == n_elecciones;
+
+		return descubierto;
+	}
+
+	public void compararJugada(Jugada jugada, List<Integer> codigo_ganador) {
 		if (jugada.codigo.size() != n_elecciones)
 			throw new RuntimeException(
 					"Jugada con numero incorrecto de elecciones: "
 							+ jugada.codigo.toString());
-
-		if (terminado())
-			return false;
-
+		
 		jugada.aciertos_en_pos = 0;
 		jugada.aciertos_no_en_pos = 0;
+		
+		// Copia.
+		List<Integer> aciertos = new ArrayList<Integer>(codigo_ganador);
 
 		for (int i = 0; i < n_elecciones; i++) {
 			Integer color = jugada.codigo.get(i);
@@ -52,17 +64,18 @@ public class CodebreakerJuego {
 			if (color < 0 || n_colores <= color)
 				throw new RuntimeException("Jugada con color incorrecto: " + color);
 
-			if (color.equals(codigo.get(i)))
+			if (color.equals(aciertos.get(i))) {
 				jugada.aciertos_en_pos++;
-			else if (codigo.contains(color)) {
-				jugada.aciertos_no_en_pos++;
+				aciertos.set(i, null);
+			} else {
+				int pos = aciertos.indexOf(color);
+				
+				if (pos > -1) {
+					jugada.aciertos_no_en_pos++;
+					aciertos.set(pos, null);
+				}
 			}
 		}
-
-		jugadas_hechas++;
-		descubierto = jugada.aciertos_en_pos == n_elecciones;
-
-		return descubierto;
 	}
 
 	public boolean terminado() {
