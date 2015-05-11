@@ -12,18 +12,18 @@ public class CodebreakerJuego {
 	private int jugadas_hechas;
 	private boolean descubierto;
 
-	public CodebreakerJuego(int n_elecciones, int n_colores) {
-		reiniciar(n_elecciones, n_colores);
+	public CodebreakerJuego(int n_elecciones, int n_colores, int n_jugadas) {
+		reiniciar(n_elecciones, n_colores, n_jugadas);
 	}
 
 	public CodebreakerJuego() {
-		reiniciar(4, 6);
+		reiniciar(4, 6, 10);
 	}
 
-	public void reiniciar(int n_elecciones, int n_colores) {
+	public void reiniciar(int n_elecciones, int n_colores, int n_jugadas) {
 		this.n_elecciones = n_elecciones;
 		this.n_colores = n_colores;
-		n_jugadas = 10;
+		this.n_jugadas = n_jugadas;
 		jugadas_hechas = 0;
 		descubierto = false;
 		codigo = new ArrayList<Integer>(n_elecciones);
