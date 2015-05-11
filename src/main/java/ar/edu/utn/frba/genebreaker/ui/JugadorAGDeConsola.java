@@ -26,22 +26,54 @@ public class JugadorAGDeConsola {
 
 	private List<Jugada> jugadas = new ArrayList<Jugada>();
 	private int[][] puntajes = new int[N_Colores][N_Elecciones];
+	
+	private void puntuar(Jugada jugada, int n_jugada) {
+		// Puntos por acertar colores en posicion correcta: todos los colores
+		// elegidos suman puntos en la posicion donde esten.
+		if (jugada.aciertos_en_pos > 0)
+		{
+			for (int i = 0; i < jugada.codigo.size(); i++) {
+				puntajes[jugada.codigo.get(i)][i] += jugada.aciertos_en_pos; 
+			}
+		}
+		
+		// Puntos por acertar colores en otra posicion: todos los colores elegidos
+		// suman puntos en todas las posiciones.
+		if (jugada.aciertos_no_en_pos > 0)
+		{
+			for (int i = 0; i < jugada.codigo.size(); i++) {
+				for (int j = 0; j < N_Elecciones; j++) {
+					puntajes[jugada.codigo.get(i)][j] += (jugada.aciertos_no_en_pos) / 2;
+				} 
+			}
+		}
+	}
 
+	/**
+	 * Funcion de aptitud. Individuos reciben puntos en base a coincidencias con
+	 * jugadas anteriores.
+	 * @param gt Genotipo que contiene solo un cromosoma con la jugada.
+	 * @return Resultado de la funcion, a mayor valor, mejor candidato.
+	 */
 	private Integer aptitud(Genotype<IntegerGene> gt) {
 		Integer puntaje = 0;
 		
 		Jugada jugada_individuo = new Jugada();
 		
 //		Alg C
+		
+		// Convertir Cromosoma a Jugada
 		for (IntegerGene gen : gt.getChromosome()) {
 			Integer color = gen.getAllele();
 			jugada_individuo.codigo.add(color);
 		}
 		
+		// Penalizar jugadas ya hechas.
 		for (Jugada jugada_anterior : jugadas)
 			if (jugada_individuo.codigo.equals(jugada_anterior.codigo))
 				return -1;
 		
+		// Puntuar la jugada del cromosoma basado en puntajes de colores/posiciones anteriores.
 		for (int i = 0; i < jugada_individuo.codigo.size(); i++) {
 			puntaje += puntajes[jugada_individuo.codigo.get(i)][i];
 		}
@@ -143,23 +175,5 @@ public class JugadorAGDeConsola {
 			jugadas.add(jugada);
 			puntuar(jugada, juego.getJugadas_hechas());
 		} while(true);
-	}
-
-	private void puntuar(Jugada jugada, int n_jugada) {
-		if (jugada.aciertos_en_pos > 0)
-		{
-			for (int i = 0; i < jugada.codigo.size(); i++) {
-				puntajes[jugada.codigo.get(i)][i] += jugada.aciertos_en_pos; 
-			}
-		}
-		
-		if (jugada.aciertos_no_en_pos > 0)
-		{
-			for (int i = 0; i < jugada.codigo.size(); i++) {
-				for (int j = 0; j < N_Elecciones; j++) {
-					puntajes[jugada.codigo.get(i)][j] += (jugada.aciertos_no_en_pos) / 2;
-				} 
-			}
-		}
 	}
 }
