@@ -9,7 +9,6 @@ import org.jenetics.IntegerGene;
 import org.jenetics.Mutator;
 import org.jenetics.RouletteWheelSelector;
 import org.jenetics.SinglePointCrossover;
-import org.jenetics.TournamentSelector;
 import org.jenetics.engine.Engine;
 import org.jenetics.engine.EvolutionResult;
 import org.jenetics.util.Factory;
@@ -112,17 +111,16 @@ public class JugadorAGDeConsola {
 			Engine<IntegerGene, Integer> engine = Engine
 					.builder(this::aptitud, gtf)
 					.populationSize(200)
-					.survivorsSelector(new TournamentSelector<>(5))
-					.offspringSelector(new RouletteWheelSelector<>())
+					.survivorsSelector(new RouletteWheelSelector<>())
 					.alterers(
-							new Mutator<>(0.115),
-							new SinglePointCrossover<>(0.16)
+							new Mutator<>(0.3),
+							new SinglePointCrossover<>()
 							)
 					.build();
 			
 			Genotype<IntegerGene> result = engine
 					.stream()
-					.limit(20)
+					.limit(100)
 					.collect(EvolutionResult.toBestGenotype());
 			
 			for (int i = 0; i < juego.getN_elecciones(); i++) {
