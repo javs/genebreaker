@@ -16,7 +16,7 @@ import org.jenetics.util.Factory;
 import ar.edu.utn.frba.genebreaker.juego.CodebreakerJuego;
 import ar.edu.utn.frba.genebreaker.juego.Jugada;
 
-public class JugadorAGDeConsola {
+public class JugadorAGDeConsola implements Jugador {
 	
 	CodebreakerJuego juego;
 	
@@ -124,10 +124,10 @@ public class JugadorAGDeConsola {
 	}
 
 	public static void main(String[] args) {
-		JugadorAGDeConsola jugador = new JugadorAGDeConsola();
-		jugador.jugar();
+		new JugadorAGDeConsola().jugar();
 	}
 	
+	@Override
 	public void jugar()
 	{
 		juego = new CodebreakerJuego(N_Elecciones, N_Colores, N_Jugadas);
