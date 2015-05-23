@@ -145,14 +145,14 @@ public class JugadorAGDeConsola {
 					.populationSize(200)
 					.survivorsSelector(new RouletteWheelSelector<>())
 					.alterers(
-							new Mutator<>(0.3),
-							new SinglePointCrossover<>()
+							new Mutator<>(0.2),
+							new SinglePointCrossover<>(0.9)
 							)
 					.build();
 			
 			Genotype<IntegerGene> result = engine
 					.stream()
-					.limit(100)
+					.limit(80)
 					.collect(EvolutionResult.toBestGenotype());
 			
 			for (int i = 0; i < juego.getN_elecciones(); i++) {
