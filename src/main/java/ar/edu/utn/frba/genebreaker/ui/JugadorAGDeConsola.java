@@ -6,9 +6,9 @@ import java.util.List;
 import org.jenetics.Genotype;
 import org.jenetics.IntegerChromosome;
 import org.jenetics.IntegerGene;
-import org.jenetics.MultiPointCrossover;
 import org.jenetics.Mutator;
 import org.jenetics.RouletteWheelSelector;
+import org.jenetics.SinglePointCrossover;
 import org.jenetics.engine.Engine;
 import org.jenetics.engine.EvolutionResult;
 import org.jenetics.util.Factory;
@@ -136,11 +136,11 @@ public class JugadorAGDeConsola implements Jugador {
 		do {
 			Engine<IntegerGene, Double> engine = Engine
 					.builder(this::aptitud, gtf)
-					.populationSize(80)
+					.populationSize(50)
 					.survivorsSelector(new RouletteWheelSelector<>())
 					.alterers(
-							new Mutator<>(0.05),
-							new MultiPointCrossover<>(3)
+							new Mutator<>(0.5),
+							new SinglePointCrossover<>(0.5)
 							)
 					.build();
 			
@@ -149,7 +149,7 @@ public class JugadorAGDeConsola implements Jugador {
 			Genotype<IntegerGene> result = engine
 					.stream()
 					.peek(stats)
-					.limit(30)
+					.limit(15)
 					.collect(EvolutionResult.toBestGenotype());
 			
 			Jugada jugada = Jugada.desdeCromosoma(result.getChromosome());
@@ -157,9 +157,6 @@ public class JugadorAGDeConsola implements Jugador {
 			boolean gano = juego.jugar(jugada);
 			
 			System.out.println("Jugando: " + jugada.toString());
-			
-			if (juego.getJugadas_hechas() == 50)
-				stats.escribirCSV();
 			
 			if (gano) {
 				System.out.println("Gano en " + juego.getJugadas_hechas());
