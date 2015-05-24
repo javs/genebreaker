@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import ar.edu.utn.frba.genebreaker.juego.Jugada;
+
 public class CodebreakerJuego {
 	private List<Integer> codigo;
 	private int n_jugadas;
@@ -55,25 +57,33 @@ public class CodebreakerJuego {
 		jugada.aciertos_en_pos = 0;
 		jugada.aciertos_no_en_pos = 0;
 		
-		// Copia.
-		List<Integer> aciertos = new ArrayList<Integer>(codigo_ganador);
+		// Copias.
+		List<Integer> real = new ArrayList<Integer>(codigo_ganador);
+		List<Integer> intento = new ArrayList<Integer>(jugada.codigo);
 
+		// Puntos por colores en posicion.
 		for (int i = 0; i < n_elecciones; i++) {
-			Integer color = jugada.codigo.get(i);
+			Integer c_intento = intento.get(i);
 
-			if (color < 0 || n_colores <= color)
-				throw new RuntimeException("Jugada con color incorrecto: " + color);
+			if (c_intento < 0 || n_colores <= c_intento)
+				throw new RuntimeException("Jugada con color incorrecto: " + c_intento);
 
-			if (color.equals(aciertos.get(i))) {
+			if (c_intento.equals(real.get(i))) {
 				jugada.aciertos_en_pos++;
-				aciertos.set(i, null);
-			} else {
-				int pos = aciertos.indexOf(color);
-				
-				if (pos > -1) {
-					jugada.aciertos_no_en_pos++;
-					aciertos.set(pos, null);
-				}
+				real.set(i, null);
+				intento.set(i, null);
+			}
+		}
+		
+		// Puntos por colores en otra posicion.
+		for (int i = 0; i < n_elecciones; i++) {
+			Integer c_intento = jugada.codigo.get(i);
+
+			int pos = real.indexOf(c_intento);
+			
+			if (pos > -1) {
+				jugada.aciertos_no_en_pos++;
+				real.set(pos, null);
 			}
 		}
 	}
